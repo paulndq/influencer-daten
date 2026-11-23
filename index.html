@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BTC & Krypto-Influencer</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#eef2f5;--panel:#fff;--ink:#16212b;--mute:#5d6b78;--line:#d5dde4;--btc:#c26a00;--views:#1f5fd1}
+@media (prefers-color-scheme:dark){:root{--bg:#10171e;--panel:#18222b;--ink:#e6edf3;--mute:#93a1ae;--line:#2a3743;--btc:#ffa22e;--views:#6ea2ff}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1000px;margin:0 auto;padding:28px 16px 48px}
+h1{font-size:1.7rem;margin:0 0 4px;letter-spacing:-.01em}
+.sub{color:var(--mute);margin:0 0 20px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:16px}
+h2{font-size:1.05rem;margin:0 0 4px}
+.note{color:var(--mute);font-size:.9rem;margin:0 0 12px}
+.chart{position:relative;height:340px}
+.badge{display:inline-block;background:#f3b13a;color:#2b1c00;border-radius:4px;padding:1px 8px;font-size:.85rem;margin-left:8px}
+.badge[hidden]{display:none}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.stat b{display:block;font-size:1.35rem}
+.stat span{color:var(--mute);font-size:.88rem}
+</style>
+</head>
+<body>
+<main>
+  <h1>BTC-Preis und Influencer-Views <span id="demo" class="badge" hidden>Demo-Daten</span></h1>
+  <p class="sub" id="updated">Lade Daten …</p>
+
+  <div class="stats">
+    <div class="stat"><b id="s-corr">–</b><span>Stärkste Korrelation (Views ↔ BTC-Rendite)</span></div>
+    <div class="stat"><b id="s-lag">–</b><span>Dabei verschoben um</span></div>
+    <div class="stat"><b id="s-n">–</b><span>Tage in der Auswertung</span></div>
+  </div>
+
+  <section class="panel">
+    <h2>Verlauf</h2>
+    <p class="note">X: Datum. Links: BTC-Schlusskurs in USD. Rechts: neue Aufrufe pro Tag, Summe aller beobachteten Kanäle.</p>
+    <div class="chart"><canvas id="c1"></canvas></div>
+  </section>
+
+  <section class="panel">
+    <h2>Zeitversetzte Korrelation</h2>
+    <p class="note">Positive Verschiebung: Views von heute werden mit der BTC-Rendite von <i>n</i> Tagen später verglichen (Views eilen voraus). Negative Verschiebung: Views reagieren auf den Preis. Mit wenigen Tagen Daten sagt das noch nichts aus.</p>
+    <div class="chart"><canvas id="c2"></canvas></div>
+  </section>
+</main>
+
+<script>
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+async function load(){
+  try{
+    const r = await fetch("data/data.json", {cache:"no-store"});
+    if(!r.ok) throw 0;
+    const j = await r.json();
+    if(!j.rows || j.rows.filter(x=>x.views_delta!=null).length < 3) throw 0;
+    return {...j, demo:false};
+  }catch(e){ return demoData(); }
+}
+
+function demoData(){
+  const rows=[]; let p=60000, d=new Date(); d.setDate(d.getDate()-120);
+  let seed=7; const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+  for(let i=0;i<120;i++){
+    const ret=(rnd()-.5)*.06; p*=1+ret;
+    rows.push({date:d.toISOString().slice(0,10), btc:Math.round(p),
+      views_delta:Math.round(900000+Math.abs(ret)*9e6+rnd()*300000)});
+    d.setDate(d.getDate()+1);
+  }
+  return {rows, demo:true, updated:null};
+}
+
+function correlation(a,b){
+  const n=a.length; if(n<5) return null;
+  const ma=a.reduce((s,x)=>s+x,0)/n, mb=b.reduce((s,x)=>s+x,0)/n;
+  let sab=0,saa=0,sbb=0;
+  for(let i=0;i<n;i++){const x=a[i]-ma,y=b[i]-mb;sab+=x*y;saa+=x*x;sbb+=y*y;}
+  return saa&&sbb ? sab/Math.sqrt(saa*sbb) : null;
+}
+
+function lagCorr(rows){
+  // BTC-Tagesrendite
+  const ret = rows.map((r,i)=> i>0 && r.btc && rows[i-1].btc ? r.btc/rows[i-1].btc-1 : null);
+  const out=[];
+  for(let lag=-7; lag<=7; lag++){
+    const a=[],b=[];
+    rows.forEach((r,i)=>{
+      const j=i+lag;
+      if(r.views_delta!=null && ret[j]!=null && j>=0 && j<rows.length){a.push(r.views_delta);b.push(ret[j]);}
+    });
+    out.push({lag, c:correlation(a,b), n:a.length});
+  }
+  return out;
+}
+
+function fmt(n){return n==null?"–":n.toLocaleString("de-DE")}
+
+load().then(data=>{
+  const rows=data.rows.filter(r=>r.btc!=null || r.views_delta!=null);
+  document.getElementById("demo").hidden=!data.demo;
+  document.getElementById("updated").textContent = data.demo
+    ? "Noch keine echten Daten. Gezeigt werden zufällig erzeugte Beispieldaten."
+    : "Zuletzt aktualisiert: " + new Date(data.updated).toLocaleString("de-DE");
+
+  const grid=css("--line"), mute=css("--mute");
+  const scale=(pos,color,title)=>({position:pos,title:{display:true,text:title,color},ticks:{color},grid:{drawOnChartArea:pos==="left",color:grid}});
+
+  new Chart(document.getElementById("c1"),{
+    type:"line",
+    data:{labels:rows.map(r=>r.date),datasets:[
+      {label:"BTC (USD)",data:rows.map(r=>r.btc),borderColor:css("--btc"),yAxisID:"y",pointRadius:0,borderWidth:2,tension:.2},
+      {label:"Neue Views pro Tag",data:rows.map(r=>r.views_delta),borderColor:css("--views"),yAxisID:"y2",pointRadius:0,borderWidth:2,tension:.2}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
+      plugins:{legend:{labels:{color:mute}}},
+      scales:{x:{ticks:{color:mute,maxTicksLimit:8},grid:{color:grid}},
+        y:scale("left",mute,"BTC in USD"),y2:scale("right",mute,"Views pro Tag")}}
+  });
+
+  const lc=lagCorr(rows);
+  const valid=lc.filter(x=>x.c!=null);
+  if(valid.length){
+    const best=valid.reduce((a,b)=>Math.abs(b.c)>Math.abs(a.c)?b:a);
+    document.getElementById("s-corr").textContent=best.c.toFixed(2).replace(".",",");
+    document.getElementById("s-lag").textContent=(best.lag>0?"+":"")+best.lag+" Tage";
+    document.getElementById("s-n").textContent=fmt(best.n);
+  }
+  new Chart(document.getElementById("c2"),{
+    type:"bar",
+    data:{labels:lc.map(x=>(x.lag>0?"+":"")+x.lag),datasets:[{label:"Korrelation",data:lc.map(x=>x.c),backgroundColor:css("--views")}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{title:{display:true,text:"Verschiebung in Tagen",color:mute},ticks:{color:mute},grid:{color:grid}},
+        y:{min:-1,max:1,ticks:{color:mute},grid:{color:grid},title:{display:true,text:"Korrelationskoeffizient",color:mute}}}}
+  });
+});
+</script>
+</body>
+</html>
