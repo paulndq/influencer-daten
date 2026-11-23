@@ -1,6 +1,6 @@
 [
-  {"id": "UCqK_GSMbpiV8spgD3ZGloSw", "name": "Coin Bureau"},
-  {"id": "UCRvqjQPSeaWn-uEx-w0XOIg", "name": "Benjamin Cowen"},
-  {"id": "UCbLhGKVY-bJPcawebgtNfbw", "name": "Altcoin Daily"},
-  {"id": "UCl2oCaw8hdR_kbqyqd2klIA", "name": "Crypto Banter"}
+  {"id": "UCqK_GSMbpiV8spgD3ZGloSw", "name": "Coin Bureau", "region": "USA/EN"},
+  {"id": "UCRvqjQPSeaWn-uEx-w0XOIg", "name": "Benjamin Cowen", "region": "USA/EN"},
+  {"id": "UCbLhGKVY-bJPcawebgtNfbw", "name": "Altcoin Daily", "region": "USA/EN"},
+  {"id": "UCl2oCaw8hdR_kbqyqd2klIA", "name": "Crypto Banter", "region": "USA/EN"}
 ]

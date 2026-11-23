@@ -22,6 +22,42 @@ def load_channels():
     return json.loads((ROOT / "channels.json").read_text(encoding="utf-8"))
 
 
+def resolve_channels(channels, key):
+    """Wandelt @Handles in Kanal-IDs um (einmalig, Ergebnis wird in data/handles.json gemerkt)."""
+    cache_file = DATA / "handles.json"
+    cache = json.loads(cache_file.read_text(encoding="utf-8")) if cache_file.exists() else {}
+    out, seen = [], set()
+    for c in channels:
+        cid = c.get("id")
+        if not cid:
+            h = (c.get("handle") or "").strip()
+            if not h:
+                print(f"Warnung: Eintrag ohne id oder handle: {c}", file=sys.stderr)
+                continue
+            if not h.startswith("@"):
+                h = "@" + h
+            if h.lower() not in cache:
+                r = requests.get(
+                    "https://www.googleapis.com/youtube/v3/channels",
+                    params={"part": "id", "forHandle": h, "key": key},
+                    timeout=30,
+                )
+                r.raise_for_status()
+                items = r.json().get("items", [])
+                if not items:
+                    print(f"Warnung: Handle nicht gefunden: {h}", file=sys.stderr)
+                    continue
+                cache[h.lower()] = items[0]["id"]
+            cid = cache[h.lower()]
+        if cid in seen:
+            print(f"Hinweis: Kanal doppelt eingetragen: {c.get('name', cid)}", file=sys.stderr)
+            continue
+        seen.add(cid)
+        out.append({**c, "id": cid})
+    cache_file.write_text(json.dumps(cache, indent=1), encoding="utf-8")
+    return out
+
+
 def fetch_youtube(channels, key):
     rows, today = [], date.today().isoformat()
     ids = [c["id"] for c in channels]
@@ -118,7 +154,7 @@ def main():
     if not key:
         sys.exit("Fehler: YT_API_KEY ist nicht gesetzt.")
     DATA.mkdir(exist_ok=True)
-    rows = fetch_youtube(load_channels(), key)
+    rows = fetch_youtube(resolve_channels(load_channels(), key), key)
     if rows:
         append_youtube(rows)
     btc = fetch_btc()
