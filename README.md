@@ -16,3 +16,13 @@
 ## Kanäle erweitern
 `channels.json` bearbeiten (Kanal-ID beginnt mit "UC"). Die ID findest du auf youtube.com/account_advanced
 oder über die Kanalseite → "Mehr" → "Kanal teilen" → "Kanal-ID kopieren".
+
+## Kanäle aus aller Welt finden
+Actions → "Kanäle finden" → Run workflow. Im Feld steht, wie viele Kanäle pro Region direkt in `channels.json`
+eingetragen werden (0 = nur Vorschläge in `data/candidates.txt`). Ein Lauf kostet ca. 5.000 von 10.000
+API-Einheiten pro Tag, also nicht mehrmals am Tag starten. Danach `channels.json` durchsehen und
+Kanäle löschen, die nicht passen (Signal-Verkäufer, Giveaway-Kanäle, falsche Region).
+
+## Neue Datenfelder
+`data/videos.csv`: Uploads der letzten 7 Tage sowie Views, Likes, Kommentare der 10 neuesten Videos pro Kanal.
+Kosten ca. 2 API-Einheiten pro Kanal und Tag. Gesammelt wird ab dem ersten Lauf, rückwirkend gibt es das nicht.

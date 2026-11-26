@@ -3,75 +3,194 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BTC & Krypto-Influencer</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<title>Views & Bitcoin</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js">new IntersectionObserver(([e])=>document.querySelector(".tools").classList.toggle("scrolled",!e.isIntersecting)).observe(document.querySelector("h1"));
+</script>
 <style>
-:root{--bg:#eef2f5;--panel:#fff;--ink:#16212b;--mute:#5d6b78;--line:#d5dde4;--btc:#c26a00;--views:#1f5fd1}
-@media (prefers-color-scheme:dark){:root{--bg:#10171e;--panel:#18222b;--ink:#e6edf3;--mute:#93a1ae;--line:#2a3743;--btc:#ffa22e;--views:#6ea2ff}}
+:root{color-scheme:light dark;--bg:#f5f5f7;--card:#fff;--ink:#1d1d1f;--mute:#6e6e73;--hair:rgba(60,60,67,.13);--fill:rgba(120,120,128,.12);--fill2:rgba(120,120,128,.2);--views:#0071e3;--btc:#1d1d1f;--bar:rgba(120,120,128,.32);--seg:#fff;--warn-bg:rgba(255,159,10,.14);--warn-ink:#8a5200;--glass:rgba(245,245,247,.72);--ease:cubic-bezier(.28,.11,.32,1)}
+@media (prefers-color-scheme:dark){:root{--bg:#000;--card:#1c1c1e;--ink:#f5f5f7;--mute:#98989d;--hair:rgba(235,235,245,.14);--fill:rgba(118,118,128,.24);--fill2:rgba(118,118,128,.36);--views:#0a84ff;--btc:#f5f5f7;--bar:rgba(152,152,157,.4);--seg:#636366;--warn-bg:rgba(255,159,10,.18);--warn-ink:#ffb340;--glass:rgba(0,0,0,.66)}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
-main{max-width:1000px;margin:0 auto;padding:28px 16px 48px}
-h1{font-size:1.7rem;margin:0 0 4px;letter-spacing:-.01em}
-.sub{color:var(--mute);margin:0 0 20px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:16px}
-h2{font-size:1.05rem;margin:0 0 4px}
-.note{color:var(--mute);font-size:.9rem;margin:0 0 12px}
-.chart{position:relative;height:340px}
-.badge{display:inline-block;background:#f3b13a;color:#2b1c00;border-radius:4px;padding:1px 8px;font-size:.85rem;margin-left:8px}
-.badge[hidden]{display:none}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
-.stat{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
-.stat b{display:block;font-size:1.35rem}
-.stat span{color:var(--mute);font-size:.88rem}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.47 -apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue","Segoe UI",system-ui,sans-serif;letter-spacing:-.006em;-webkit-font-smoothing:antialiased}
+main,.tools-in{max-width:980px;margin:0 auto;padding-left:22px;padding-right:22px}
+main{padding-bottom:64px}
+.hero{padding:80px 0 36px}
+h1{font:700 clamp(38px,7.5vw,68px)/1.04 -apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue","Segoe UI",system-ui,sans-serif;letter-spacing:-.035em;margin:0 0 14px}
+.lead{font-size:clamp(19px,2.6vw,24px);line-height:1.3;letter-spacing:-.015em;color:var(--mute);margin:0;max-width:26em}
+.meta{font-size:13px;color:var(--mute);margin:18px 0 0}
+.badge{font-size:12px;font-weight:600;color:var(--warn-ink);background:var(--warn-bg);border-radius:6px;padding:2px 8px;margin-left:10px;letter-spacing:0}
+.badge[hidden],.warn[hidden]{display:none}
+.tools{position:sticky;top:0;z-index:5;background:var(--glass);-webkit-backdrop-filter:saturate(180%) blur(24px);backdrop-filter:saturate(180%) blur(24px);border-bottom:1px solid var(--hair)}
+.tools-in{display:flex;justify-content:space-between;align-items:center;gap:14px;padding-top:9px;padding-bottom:9px}
+.tools-title{flex:1;font-size:15px;font-weight:600;letter-spacing:-.01em;opacity:0;transition:opacity .3s var(--ease)}
+.scrolled .tools-title{opacity:1}
+.seg{position:relative;display:grid;grid-template-columns:repeat(3,1fr);background:var(--fill);border-radius:9px;padding:2px}
+.seg::before{content:"";position:absolute;top:2px;bottom:2px;left:2px;width:calc((100% - 4px)/3);border-radius:7px;background:var(--seg);box-shadow:0 3px 8px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.08);transform:translateX(calc(var(--i,1)*100%));transition:transform .35s var(--ease)}
+.seg button{position:relative;border:0;background:transparent;color:var(--ink);font:inherit;font-size:13px;font-weight:500;padding:5px 16px;cursor:pointer;transition:opacity .15s}
+.seg button:active{opacity:.55}
+.seg button:focus-visible{outline:2px solid var(--views);outline-offset:1px;border-radius:7px}
+.sw{position:relative;display:inline-flex;align-items:center;gap:10px;font-size:13px;color:var(--mute);cursor:pointer}
+.sw input{position:absolute;opacity:0}
+.sw b{width:40px;height:24px;border-radius:12px;background:var(--fill2);position:relative;transition:background .3s var(--ease)}
+.sw b::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.3);transition:transform .3s var(--ease)}
+.sw input:checked+b{background:#34c759}
+.sw input:checked+b::after{transform:translateX(16px)}
+.sw input:focus-visible+b{outline:2px solid var(--views);outline-offset:2px}
+.warn{margin:28px 0 0;padding:13px 18px;border-radius:14px;background:var(--warn-bg);color:var(--warn-ink);font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--hair);border-radius:24px;overflow:hidden;margin-top:28px}
+.stat{background:var(--card);padding:24px 28px}
+.stat span{display:block;font-size:13px;color:var(--mute);margin-bottom:4px}
+.stat b{display:block;font:600 clamp(32px,6vw,52px)/1.1 -apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue","Segoe UI",system-ui,sans-serif;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+section{margin-top:64px}
+h2{font:600 clamp(22px,3.6vw,30px)/1.15 -apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue","Segoe UI",system-ui,sans-serif;letter-spacing:-.028em;margin:0 0 10px}
+h2 span{color:var(--mute)}
+.note{font-size:13px;color:var(--mute);margin:0 0 20px;max-width:64ch}
+.card{background:var(--card);border-radius:24px;padding:28px 28px 22px}
+.chart{position:relative;height:320px}
+.chart.tall{height:480px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 18px}
+.key{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:500;color:var(--mute);margin-right:4px}
+.key i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.chip{position:relative;display:inline-flex;align-items:center;gap:7px;background:var(--fill);border-radius:999px;padding:6px 13px 6px 11px;font-size:13px;font-weight:500;cursor:pointer;user-select:none;transition:background .2s var(--ease),transform .2s var(--ease)}
+.chip:hover{background:var(--fill2)}
+.chip:active{transform:scale(.96)}
+.chip input{position:absolute;opacity:0}
+.chip i{width:10px;height:10px;border-radius:50%;background:var(--c);transition:box-shadow .2s var(--ease),background .2s var(--ease)}
+.chip input:not(:checked)~i{background:transparent;box-shadow:inset 0 0 0 2px var(--c)}
+.chip input:not(:checked)~span{color:var(--mute)}
+.chip input:focus-visible~i{outline:2px solid var(--views);outline-offset:3px}
+.list{background:var(--card);border-radius:24px;padding-left:24px;overflow-x:auto}
+table{border-collapse:collapse;width:100%}
+th{font-size:12px;font-weight:500;color:var(--mute);text-align:left;padding:14px 0 10px;border-bottom:1px solid var(--hair)}
+td{padding:15px 0;border-bottom:1px solid var(--hair)}
+th:last-child,td:last-child{padding-right:24px}
+tr:last-child td{border-bottom:0}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--c);margin-right:10px}
+.stats+.stats{margin-top:12px}
+.stats.s4{grid-template-columns:repeat(4,1fr)}
+.s4 .stat{padding:20px 24px}
+.s4 .stat b{font-size:clamp(26px,4.6vw,40px)}
+.more{display:block;width:100%;border:0;background:transparent;color:var(--views);font:inherit;font-size:15px;text-align:left;padding:14px 24px 16px 0;cursor:pointer}
+.more[hidden]{display:none}
+.more:hover{opacity:.7}
+.foot{margin-top:56px;font-size:12px;color:var(--mute);text-align:center}
+@media (max-width:600px){.stats{grid-template-columns:1fr}.stats.s4{grid-template-columns:repeat(2,1fr)}.hero{padding:48px 0 28px}section{margin-top:48px}.card{padding:20px 16px 14px;border-radius:20px}.chart{height:270px}.chart.tall{height:400px}.tools-title{display:none}.stat{padding:18px 22px}}
 </style>
 </head>
 <body>
 <main>
-  <h1>BTC-Preis und Influencer-Views <span id="demo" class="badge" hidden>Demo-Daten</span></h1>
-  <p class="sub" id="updated">Lade Daten …</p>
+  <header class="hero">
+    <h1>Views &amp; Bitcoin</h1>
+    <p class="lead">Wie viel Aufmerksamkeit Krypto-Kanäle bekommen und wie sich der Bitcoin-Kurs dazu bewegt.</p>
+    <p class="meta"><span id="updated">Lade Daten …</span><span id="demo" class="badge" hidden>Demo-Daten</span></p>
+  </header>
+</main>
+
+<div class="tools"><div class="tools-in">
+  <span class="tools-title">Views &amp; Bitcoin</span>
+  <div class="seg" id="ranges">
+    <button data-r="30">30 Tage</button>
+    <button data-r="90">90 Tage</button>
+    <button data-r="99999">Alles</button>
+  </div>
+  <label class="sw"><input type="checkbox" id="sm" checked><b></b>7-Tage-Schnitt</label>
+</div></div>
+
+<main>
+  <div class="warn" id="warn" hidden></div>
 
   <div class="stats">
-    <div class="stat"><b id="s-corr">–</b><span>Stärkste Korrelation (Views ↔ BTC-Rendite)</span></div>
-    <div class="stat"><b id="s-lag">–</b><span>Dabei verschoben um</span></div>
-    <div class="stat"><b id="s-n">–</b><span>Tage in der Auswertung</span></div>
+    <div class="stat"><span>Stärkste Korrelation</span><b id="s-corr">–</b></div>
+    <div class="stat"><span>Bei Verschiebung um</span><b id="s-lag">–</b></div>
+    <div class="stat"><span>Tage mit Daten</span><b id="s-n">–</b></div>
   </div>
 
-  <section class="panel">
-    <h2>Verlauf</h2>
-    <p class="note">X: Datum. Links: BTC-Schlusskurs in USD. Rechts: neue Aufrufe pro Tag, Summe aller beobachteten Kanäle.</p>
-    <div class="chart"><canvas id="c1"></canvas></div>
+  <div class="stats s4">
+    <div class="stat"><span>Kanäle</span><b id="y-ch">–</b></div>
+    <div class="stat"><span>Abonnenten</span><b id="y-subs">–</b></div>
+    <div class="stat"><span>Views im Zeitraum</span><b id="y-views">–</b></div>
+    <div class="stat"><span>Engagement</span><b id="y-eng">–</b></div>
+  </div>
+
+  <section>
+    <h2>Verlauf. <span>Preis und Aufmerksamkeit im Vergleich.</span></h2>
+    <p class="note">BTC-Kurs links, neue Aufrufe pro Tag rechts, eine Linie pro Region. Die Auswahl gilt auch für Kennzahlen, Kanal-Diagramm und Korrelation.</p>
+    <div class="card">
+      <div class="chips" id="chips"></div>
+      <div class="chart"><canvas id="c1"></canvas></div>
+    </div>
   </section>
 
-  <section class="panel">
-    <h2>Zeitversetzte Korrelation</h2>
-    <p class="note">Positive Verschiebung: Views von heute werden mit der BTC-Rendite von <i>n</i> Tagen später verglichen (Views eilen voraus). Negative Verschiebung: Views reagieren auf den Preis. Mit wenigen Tagen Daten sagt das noch nichts aus.</p>
-    <div class="chart"><canvas id="c2"></canvas></div>
+  <section>
+    <h2>Views nach Kanal. <span>Wer die Aufrufe liefert.</span></h2>
+    <p class="note">Unten die Balken: neue Aufrufe pro Tag, gestapelt, jede Farbe ein Kanal (gleiche Region, gleicher Farbton). Oben die Linie: BTC-Kurs. Mit der Maus über einen Tag siehst du die sechs stärksten Kanäle.</p>
+    <div class="card"><div class="chart tall"><canvas id="c3"></canvas></div></div>
   </section>
+
+  <section>
+    <h2>Kanäle. <span>Wer die meisten Aufrufe bringt.</span></h2>
+    <p class="note">Neue Aufrufe im gewählten Zeitraum. Engagement: Likes und Kommentare pro View bei den zehn neuesten Videos eines Kanals.</p>
+    <div class="list"><table><thead><tr><th>Kanal</th><th class="num">Views</th><th class="num">Abonnenten</th><th class="num">Engagement</th></tr></thead><tbody id="tc"></tbody></table><button class="more" id="more" hidden></button></div>
+  </section>
+
+  <section id="sec-act">
+    <h2>Aktivität. <span>Uploads und Engagement.</span></h2>
+    <p class="note">Balken: neue Videos pro Tag über alle gewählten Kanäle. Linie: Likes und Kommentare pro View bei den zehn neuesten Videos jedes Kanals. Diese Werte werden erst ab dem ersten Datenlauf gesammelt, rückwirkend gibt es sie nicht.</p>
+    <div class="card"><div class="chart"><canvas id="c4"></canvas></div></div>
+  </section>
+
+  <section>
+    <h2>Zeitversatz. <span>Eilen die Views dem Preis voraus?</span></h2>
+    <p class="note">Positive Verschiebung: Views von heute gegen die BTC-Rendite von <i>n</i> Tagen später. Negative Verschiebung: Views reagieren auf den Preis. Der stärkste Wert ist blau.</p>
+    <div class="card"><div class="chart"><canvas id="c2"></canvas></div></div>
+  </section>
+
+  <section>
+    <h2>Regionen. <span>Die Korrelation im Einzelnen.</span></h2>
+    <p class="note">Bei vielen Vergleichen taucht zufällig immer irgendwo ein hoher Wert auf. Trau nur Mustern, die in mehreren Regionen und Zeiträumen wiederkehren.</p>
+    <div class="list"><table><thead><tr><th>Region</th><th class="num">Korrelation</th><th class="num">Verschiebung</th><th class="num">Tage</th></tr></thead><tbody id="tb"></tbody></table></div>
+  </section>
+
+  <p class="foot">Quellen: YouTube Data API, Kraken. Keine Anlageberatung.</p>
 </main>
 
 <script>
-const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+Chart.defaults.font.family=getComputedStyle(document.body).fontFamily;
+Chart.defaults.font.size=12;
+Object.assign(Chart.defaults.plugins.tooltip,{backgroundColor:"rgba(28,28,30,.94)",titleColor:"#fff",bodyColor:"#f2f2f7",footerColor:"#aeaeb2",cornerRadius:10,padding:10,boxPadding:4,usePointStyle:true,titleFont:{weight:"600"},footerFont:{weight:"500"}});
+const HUES=[215,28,150,285,350,190,60,320];
+let DATA=null, range=90, smooth=true, charts={}, active=new Set(), showAll=false;
+const num=(x,d=2)=>x==null?"–":x.toFixed(d).replace(".",",");
+const compact=v=>{const a=Math.abs(v);return a>=1e6?(v/1e6).toLocaleString("de-DE",{maximumFractionDigits:1})+" Mio.":a>=1e3?(v/1e3).toLocaleString("de-DE",{maximumFractionDigits:a<1e4?1:0})+" Tsd.":String(Math.round(v));};
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 
 async function load(){
   try{
-    const r = await fetch("data/data.json", {cache:"no-store"});
+    const r=await fetch("data/data.json",{cache:"no-store"});
     if(!r.ok) throw 0;
-    const j = await r.json();
-    if(!j.rows || j.rows.filter(x=>x.views_delta!=null).length < 3) throw 0;
-    return {...j, demo:false};
-  }catch(e){ return demoData(); }
+    const j=await r.json();
+    if(!j.rows||j.rows.filter(x=>x.views_delta!=null).length<4) throw 0;
+    return {...j,demo:false};
+  }catch(e){return demoData();}
 }
 
 function demoData(){
-  const rows=[]; let p=60000, d=new Date(); d.setDate(d.getDate()-120);
-  let seed=7; const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+  let p=60000,d=new Date(),seed=7;
+  d.setDate(d.getDate()-120);
+  const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+  const channels=[], w={}; let W=0;
+  [["EN",5],["DACH",4],["Asien",3]].forEach(([g,n])=>{for(let i=1;i<=n;i++){const id=g+i;channels.push({id,name:"Demo-Kanal "+g+" "+i,region:g,subs:Math.round((.05+rnd()*2)*1e6),eng:.02+rnd()*.03,u7:Math.round(1+rnd()*6)});w[id]=.3+rnd()*1.7;W+=w[id];}});
+  const rows=[];
   for(let i=0;i<120;i++){
     const ret=(rnd()-.5)*.06; p*=1+ret;
-    rows.push({date:d.toISOString().slice(0,10), btc:Math.round(p),
-      views_delta:Math.round(900000+Math.abs(ret)*9e6+rnd()*300000)});
+    const base=900000+Math.abs(ret)*9e6, ch={}, regions={}; let tot=0;
+    channels.forEach(c=>{const v=Math.round(base*w[c.id]/W*(.7+rnd()*.6));ch[c.id]=v;regions[c.region]=(regions[c.region]||0)+v;tot+=v;});
+    const ext={}; for(const g in regions){const n=channels.filter(c=>c.region===g).length,v=regions[g]*10;ext[g]={u:Math.round(n*(.6+rnd()*.8)),v,l:Math.round(v*(.03+rnd()*.01)),c:Math.round(v*.004)};}
+    rows.push({date:d.toISOString().slice(0,10),btc:Math.round(p),views_delta:tot,regions,ch,ext});
     d.setDate(d.getDate()+1);
   }
-  return {rows, demo:true, updated:null};
+  return {rows,channels,demo:true,updated:null};
 }
 
 function correlation(a,b){
@@ -79,64 +198,144 @@ function correlation(a,b){
   const ma=a.reduce((s,x)=>s+x,0)/n, mb=b.reduce((s,x)=>s+x,0)/n;
   let sab=0,saa=0,sbb=0;
   for(let i=0;i<n;i++){const x=a[i]-ma,y=b[i]-mb;sab+=x*y;saa+=x*x;sbb+=y*y;}
-  return saa&&sbb ? sab/Math.sqrt(saa*sbb) : null;
+  return saa&&sbb?sab/Math.sqrt(saa*sbb):null;
 }
-
-function lagCorr(rows){
-  // BTC-Tagesrendite
-  const ret = rows.map((r,i)=> i>0 && r.btc && rows[i-1].btc ? r.btc/rows[i-1].btc-1 : null);
-  const out=[];
-  for(let lag=-7; lag<=7; lag++){
+function lagCorr(btc,vals){
+  const ret=btc.map((p,i)=>i>0&&p&&btc[i-1]?p/btc[i-1]-1:null), out=[];
+  for(let lag=-7;lag<=7;lag++){
     const a=[],b=[];
-    rows.forEach((r,i)=>{
-      const j=i+lag;
-      if(r.views_delta!=null && ret[j]!=null && j>=0 && j<rows.length){a.push(r.views_delta);b.push(ret[j]);}
-    });
-    out.push({lag, c:correlation(a,b), n:a.length});
+    vals.forEach((v,i)=>{const j=i+lag;if(v!=null&&j>=0&&j<ret.length&&ret[j]!=null){a.push(v);b.push(ret[j]);}});
+    out.push({lag,c:correlation(a,b),n:a.length});
   }
   return out;
 }
+const best=l=>{const v=l.filter(x=>x.c!=null);return v.length?v.reduce((a,b)=>Math.abs(b.c)>Math.abs(a.c)?b:a):null;};
+function ma(a,n){return a.map((_,i)=>{let s=0,c=0;for(let j=Math.max(0,i-n+1);j<=i;j++){if(a[j]!=null){s+=a[j];c++;}}return c?s/c:null;});}
+function mk(id,cfg){if(charts[id])charts[id].destroy();charts[id]=new Chart(document.getElementById(id),cfg);}
+const RH={Asien:215,DACH:28,EN:150,Spanisch:285,"Türkei":350,Portugiesisch:190,Russisch:55,Frankreich:320,Italien:100,Polen:250,Afrika:10};
+const hue=g=>RH[g]!=null?RH[g]:HUES[DATA.regs.indexOf(g)%HUES.length];
 
-function fmt(n){return n==null?"–":n.toLocaleString("de-DE")}
+function render(){
+  const all=DATA.rows, regs=DATA.regs;
+  const tot=all.map(r=>r.views_delta==null?null:[...active].reduce((s,g)=>s+((r.regions&&r.regions[g])||0),0));
+  const totS=smooth?ma(tot,7):tot;
+  const regRaw={};
+  regs.forEach(g=>{regRaw[g]=all.map(r=>r.regions&&r.regions[g]!=null?r.regions[g]:null);});
+  const s=Math.max(0,all.length-range), rows=all.slice(s);
+  const labels=rows.map(r=>r.date), btc=rows.map(r=>r.btc);
+  const mute=css("--mute"), grid=css("--line");
+  const axis=(pos,title,extra)=>({position:pos,border:{display:false},title:{display:false},ticks:{color:mute,padding:6},grid:{drawOnChartArea:pos==="left",drawTicks:false,color:grid},...extra});
+  const xs={border:{color:grid},ticks:{color:mute,maxTicksLimit:7,padding:6},grid:{display:false}};
+  const line={pointRadius:0,borderWidth:2,tension:.2};
 
-load().then(data=>{
-  const rows=data.rows.filter(r=>r.btc!=null || r.views_delta!=null);
-  document.getElementById("demo").hidden=!data.demo;
-  document.getElementById("updated").textContent = data.demo
-    ? "Noch keine echten Daten. Gezeigt werden zufällig erzeugte Beispieldaten."
-    : "Zuletzt aktualisiert: " + new Date(data.updated).toLocaleString("de-DE");
-
-  const grid=css("--line"), mute=css("--mute");
-  const scale=(pos,color,title)=>({position:pos,title:{display:true,text:title,color},ticks:{color},grid:{drawOnChartArea:pos==="left",color:grid}});
-
-  new Chart(document.getElementById("c1"),{
-    type:"line",
-    data:{labels:rows.map(r=>r.date),datasets:[
-      {label:"BTC (USD)",data:rows.map(r=>r.btc),borderColor:css("--btc"),yAxisID:"y",pointRadius:0,borderWidth:2,tension:.2},
-      {label:"Neue Views pro Tag",data:rows.map(r=>r.views_delta),borderColor:css("--views"),yAxisID:"y2",pointRadius:0,borderWidth:2,tension:.2}
-    ]},
+  const regLine=regs.filter(g=>active.has(g)).map(g=>({...line,label:g,data:(smooth?ma(regRaw[g],7):regRaw[g]).slice(s),borderColor:"hsl("+hue(g)+",62%,50%)",yAxisID:"y2"}));
+  mk("c1",{type:"line",data:{labels,datasets:[
+    {...line,label:"BTC (USD)",data:btc,borderColor:css("--btc"),borderWidth:2.5,yAxisID:"y"},...regLine]},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
-      plugins:{legend:{labels:{color:mute}}},
-      scales:{x:{ticks:{color:mute,maxTicksLimit:8},grid:{color:grid}},
-        y:scale("left",mute,"BTC in USD"),y2:scale("right",mute,"Views pro Tag")}}
-  });
+      plugins:{legend:{display:false}},scales:{x:xs,y:axis("left","BTC in USD"),y2:axis("right",smooth?"Views pro Tag (7-Tage-Schnitt)":"Views pro Tag",{ticks:{color:mute,padding:6,callback:compact}})}}});
 
-  const lc=lagCorr(rows);
-  const valid=lc.filter(x=>x.c!=null);
-  if(valid.length){
-    const best=valid.reduce((a,b)=>Math.abs(b.c)>Math.abs(a.c)?b:a);
-    document.getElementById("s-corr").textContent=best.c.toFixed(2).replace(".",",");
-    document.getElementById("s-lag").textContent=(best.lag>0?"+":"")+best.lag+" Tage";
-    document.getElementById("s-n").textContent=fmt(best.n);
-  }
-  new Chart(document.getElementById("c2"),{
-    type:"bar",
-    data:{labels:lc.map(x=>(x.lag>0?"+":"")+x.lag),datasets:[{label:"Korrelation",data:lc.map(x=>x.c),backgroundColor:css("--views")}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-      scales:{x:{title:{display:true,text:"Verschiebung in Tagen",color:mute},ticks:{color:mute},grid:{color:grid}},
-        y:{min:-1,max:1,ticks:{color:mute},grid:{color:grid},title:{display:true,text:"Korrelationskoeffizient",color:mute}}}}
+  // Balken unten, BTC-Linie oben
+  const chs=(DATA.channels||[]).filter(c=>active.has(c.region)).sort((a,b)=>a.region.localeCompare(b.region)||a.name.localeCompare(b.name));
+  const cnt={}, seen={};
+  chs.forEach(c=>{cnt[c.region]=(cnt[c.region]||0)+1;});
+  const sets=chs.map(c=>{
+    const i=seen[c.region]=(seen[c.region]==null?0:seen[c.region]+1), n=cnt[c.region];
+    const raw=all.map(r=>r.ch&&r.ch[c.id]!=null?r.ch[c.id]:null);
+    const v=(smooth?ma(raw,7):raw).slice(s), l=n>1?34+i*(40/(n-1)):55;
+    return {type:"bar",label:c.name+" ("+c.region+")",data:v,backgroundColor:"hsl("+hue(c.region)+",62%,"+l+"%)",stack:"v",yAxisID:"y2",order:1,borderWidth:0,categoryPercentage:.95,barPercentage:1};
   });
+  const stack=labels.map((_,i)=>sets.reduce((a,d)=>a+(d.data[i]>0?d.data[i]:0),0));
+  sets.push({type:"line",label:"BTC (USD)",data:btc,borderColor:css("--btc"),borderWidth:2.5,pointRadius:0,tension:.2,yAxisID:"y",order:0});
+  const sMax=Math.max(1,...stack);
+  const bv=btc.filter(x=>x!=null), bMin=bv.length?Math.min(...bv):0, bMax=bv.length?Math.max(...bv):1, bR=(bMax-bMin)||1;
+  const fmtN=v=>Math.round(v).toLocaleString("de-DE");
+  mk("c3",{type:"bar",data:{labels,datasets:sets},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
+      plugins:{legend:{display:false},tooltip:{
+        itemSort:(a,b)=>(b.raw||0)-(a.raw||0),
+        filter:(it,i,items)=>it.dataset.type==="line"||(it.raw>0&&items.filter(x=>x.dataset.type!=="line").sort((a,b)=>(b.raw||0)-(a.raw||0)).slice(0,6).includes(it)),
+        callbacks:{label:c=>c.dataset.type==="line"?"BTC: "+fmtN(c.raw)+" USD":c.dataset.label+": "+fmtN(c.raw),
+          footer:items=>items.length?"Summe aller Kanäle: "+fmtN(stack[items[0].dataIndex]):""}}},
+      scales:{x:{...xs,stacked:true},
+        y:axis("left","BTC in USD",{min:bMin-bR*1.1,max:bMax+bR*.1,grid:{drawOnChartArea:true,drawTicks:false,color:grid},afterBuildTicks:sc=>{sc.ticks=sc.ticks.filter(t=>t.value>=bMin-bR*.05);}}),
+        y2:axis("right",smooth?"Views pro Tag (7-Tage-Schnitt)":"Views pro Tag",{stacked:true,min:0,max:sMax*2.1,ticks:{color:mute,padding:6,callback:compact},grid:{drawOnChartArea:true,drawTicks:false,color:grid},afterBuildTicks:sc=>{sc.ticks=sc.ticks.filter(t=>t.value<=sMax*1.05);}})}}});
+
+  // YouTube in Zahlen
+  const selCh=(DATA.channels||[]).filter(c=>active.has(c.region));
+  const lastExt=[...all].reverse().find(r=>r.ext&&Object.keys(r.ext).some(g=>active.has(g)));
+  let eng=null;
+  if(lastExt){let L=0,C=0,V=0;active.forEach(g=>{const e=lastExt.ext[g];if(e){L+=e.l;C+=e.c;V+=e.v;}});eng=V?(L+C)/V:null;}
+  document.getElementById("y-ch").textContent=selCh.length.toLocaleString("de-DE");
+  document.getElementById("y-subs").textContent=compact(selCh.reduce((a,c)=>a+(c.subs||0),0));
+  document.getElementById("y-views").textContent=compact(tot.slice(s).reduce((a,x)=>a+(x||0),0));
+  document.getElementById("y-eng").textContent=eng==null?"–":num(eng*100,1)+" %";
+
+  const wv={};
+  rows.forEach(r=>{if(r.ch)for(const id in r.ch)wv[id]=(wv[id]||0)+r.ch[id];});
+  const ranked=selCh.map(c=>({...c,wv:wv[c.id]||0})).sort((a,b)=>b.wv-a.wv);
+  document.getElementById("tc").innerHTML=(showAll?ranked:ranked.slice(0,10)).map(c=>'<tr><td><i class="dot" style="--c:hsl('+hue(c.region)+',62%,50%)"></i>'+esc(c.name)+'</td><td class="num">'+compact(c.wv)+'</td><td class="num">'+(c.subs!=null?compact(c.subs):"–")+'</td><td class="num">'+(c.eng!=null?num(c.eng*100,1)+" %":"–")+'</td></tr>').join("")||'<tr><td colspan="4">Keine Kanäle ausgewählt.</td></tr>';
+  const mb=document.getElementById("more");
+  mb.hidden=ranked.length<=10;
+  mb.textContent=showAll?"Weniger anzeigen":"Alle "+ranked.length+" Kanäle anzeigen";
+
+  const hasExt=all.some(r=>r.ext&&Object.keys(r.ext).length);
+  document.getElementById("sec-act").hidden=!hasExt;
+  if(hasExt){
+    const up=all.map(r=>{if(!r.ext)return null;let u=0;active.forEach(g=>{if(r.ext[g])u+=r.ext[g].u;});return u/7;});
+    const en=all.map(r=>{if(!r.ext)return null;let L=0,V=0;active.forEach(g=>{const e=r.ext[g];if(e){L+=e.l+e.c;V+=e.v;}});return V?L/V*100:null;});
+    mk("c4",{type:"bar",data:{labels,datasets:[
+      {type:"bar",label:"Uploads pro Tag",data:(smooth?ma(up,7):up).slice(s),backgroundColor:css("--bar"),borderRadius:3,yAxisID:"y",order:1,categoryPercentage:.9},
+      {type:"line",label:"Engagement",data:(smooth?ma(en,7):en).slice(s),borderColor:css("--views"),borderWidth:2.5,pointRadius:0,tension:.25,yAxisID:"y2",order:0}]},
+      options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.type==="line"?"Engagement: "+num(c.raw,2)+" %":"Uploads pro Tag: "+num(c.raw,1)}}},
+        scales:{x:{...xs,stacked:false},y:axis("left","Uploads"),y2:axis("right","Engagement",{ticks:{color:mute,padding:6,callback:v=>num(v,1)+" %"}})}}});
+  }
+
+  const raw=tot.slice(s), lc=lagCorr(btc,raw), b=best(lc);
+  document.getElementById("s-corr").textContent=b?num(b.c):"–";
+  document.getElementById("s-lag").textContent=b?(b.lag>0?"+":"")+b.lag+" Tage":"–";
+  const n=tot.filter(x=>x!=null).length;
+  document.getElementById("s-n").textContent=n.toLocaleString("de-DE");
+  const w=document.getElementById("warn");
+  w.hidden=!(n<30);
+  w.textContent="Erst "+n+" Tage mit Daten. Unter 30 Tagen sind Korrelationen Zufall, ab etwa 90 Tagen werden erste Tendenzen lesbar.";
+
+  mk("c2",{type:"bar",data:{labels:lc.map(x=>(x.lag>0?"+":"")+x.lag),datasets:[{label:"Korrelation",data:lc.map(x=>x.c),backgroundColor:lc.map(x=>b&&x.lag===b.lag?css("--views"):css("--bar")),borderRadius:4,borderSkipped:false,barPercentage:.7}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>"Korrelation: "+num(c.raw)}}},
+      scales:{x:{border:{color:grid},title:{display:true,text:"Verschiebung in Tagen",color:mute,font:{size:11,weight:"500"}},ticks:{color:mute},grid:{display:false}},
+        y:{min:-1,max:1,border:{display:false},ticks:{color:mute,padding:6},grid:{color:grid,drawTicks:false},title:{display:false}}}}});
+
+  document.getElementById("tb").innerHTML=regs.map(g=>{
+    const x=best(lagCorr(btc,regRaw[g].slice(s)));
+    return '<tr><td><i class="dot" style="--c:hsl('+hue(g)+',62%,50%)"></i>'+esc(g)+'</td><td class="num">'+(x?num(x.c):"–")+'</td><td class="num">'+(x?(x.lag>0?"+":"")+x.lag+" Tage":"–")+'</td><td class="num">'+(x?x.n:0)+'</td></tr>';
+  }).join("")||'<tr><td colspan="4">Noch keine Regionsdaten.</td></tr>';
+}
+
+load().then(d=>{
+  DATA=d;
+  DATA.regs=[...new Set(d.rows.flatMap(r=>Object.keys(r.regions||{})))].sort();
+  active=new Set(DATA.regs);
+  document.getElementById("chips").innerHTML='<span class="key"><i style="background:var(--btc)"></i>BTC</span>'+DATA.regs.map(g=>'<label class="chip" style="--c:hsl('+hue(g)+',62%,50%)"><input type="checkbox" data-g="'+esc(g)+'" checked><i></i><span>'+esc(g)+'</span></label>').join("");
+  document.getElementById("demo").hidden=!d.demo;
+  document.getElementById("updated").textContent=d.demo
+    ?"Noch keine echten Daten. Gezeigt werden zufällig erzeugte Beispieldaten."
+    :"Zuletzt aktualisiert: "+new Date(d.updated).toLocaleString("de-DE");
+  render();
 });
+document.getElementById("chips").addEventListener("change",e=>{
+  const g=e.target.dataset.g; if(g==null||!DATA) return;
+  if(e.target.checked) active.add(g); else active.delete(g);
+  render();
+});
+document.getElementById("ranges").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b||!DATA) return;
+  range=+b.dataset.r;
+  document.getElementById("ranges").style.setProperty("--i",[...b.parentNode.children].indexOf(b));
+  document.querySelectorAll("#ranges button").forEach(x=>x.classList.toggle("on",x===b));
+  render();
+});
+document.getElementById("more").addEventListener("click",()=>{showAll=!showAll;if(DATA)render();});
+document.getElementById("sm").addEventListener("change",e=>{smooth=e.target.checked;if(DATA)render();});
 </script>
 </body>
 </html>
