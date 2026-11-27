@@ -1,0 +1,30 @@
+name: Google Trends
+on:
+  schedule:
+    - cron: "40 4 * * *"   # täglich um 04:40 UTC, nur die letzten 90 Tage
+  workflow_dispatch:
+    inputs:
+      frames:
+        description: "Zeiträume: d90 (90 Tage täglich), w5 (5 Jahre wöchentlich), all (seit 2004 monatlich)"
+        default: "d90,w5,all"
+permissions:
+  contents: write
+jobs:
+  trends:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytrends
+      - run: python fetch_trends.py --frames "${{ inputs.frames || 'd90' }}"
+      - name: Daten committen
+        if: success()
+        run: |
+          git config user.name "daten-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data
+          git diff --staged --quiet || git commit -m "Trends $(date -u +%F)"
+          git pull --rebase
+          git push
